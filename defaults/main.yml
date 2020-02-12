@@ -1,0 +1,19 @@
+---
+# defaults file for copr
+
+# name of the copr repo to enable
+copr_repo: ufven/cepces
+
+
+copr_owner: >-
+  {{ copr_repo | regex_search('^([a-zA-Z0-9._-]+)/([a-zA-Z0-9._-]+)$', '\1') | first }}
+
+copr_project: >-
+  {{ copr_repo | regex_search('^([a-zA-Z0-9._-]+)/([a-zA-Z0-9._-]+)$', '\2') | first }}
+
+# this is overloaded to detect an invalid copr_repo
+copr_repo_file: /etc/yum.repos.d/_copr{{ ansible_pkg_mgr == 'dnf'
+    | ternary(':copr.fedorainfracloud.org:' ~ copr_owner ~ ':' ~ copr_project,
+    '_' ~ copr_owner ~ '-' ~ copr_project)
+    if copr_repo is search('^([a-zA-Z0-9._-]+)/([a-zA-Z0-9._-]+)$')
+    else lookup('copr_repo parameter is invalid') }}.repo

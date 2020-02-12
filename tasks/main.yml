@@ -1,0 +1,27 @@
+---
+# tasks file for copr
+
+- name: get needed facts
+  setup:
+    gather_subset: pkg_mgr,distribution,distribution_major_version,!min
+  when:
+  - ansible_pkg_mgr is not defined or
+    ansible_distribution is not defined or
+    ansible_distribution_major_version is not defined
+
+- name: place repo file for {{ copr_repo }}
+  copy:
+    dest: "{{ copr_repo_file }}"
+    mode: '0644'
+    content: |
+      [copr:copr.fedorainfracloud.org:{{ copr_owner }}:{{ copr_project }}]
+      name=Copr repo for {{ copr_project }} owned by {{ copr_owner }}
+      baseurl=https://download.copr.fedorainfracloud.org/results/{{ copr_owner }}/{{ copr_project }}/{{ (ansible_distribution == 'Fedora')
+        | ternary('fedora-$releasever', 'epel-' ~ ansible_distribution_major_version) }}-$basearch/
+      type=rpm-md
+      skip_if_unavailable=True
+      gpgcheck=1
+      gpgkey=https://download.copr.fedorainfracloud.org/results/{{ copr_owner }}/{{ copr_project }}/pubkey.gpg
+      repo_gpgcheck=0
+      enabled=1
+      enabled_metadata=1
