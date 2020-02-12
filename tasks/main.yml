@@ -3,7 +3,9 @@
 
 - name: get needed facts
   setup:
-    gather_subset: pkg_mgr,distribution,distribution_major_version,!min
+    gather_subset: >-
+      {{ ansible_version.full is version_compare('2.4', '>=')
+      | ternary('pkg_mgr,distribution,distribution_major_version,!min', '!all') }}
   when:
   - ansible_pkg_mgr is not defined or
     ansible_distribution is not defined or
