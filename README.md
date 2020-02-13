@@ -14,6 +14,7 @@ Role Variables
 ```yaml
 # name of the copr repo to enable
 copr_repo: user/project
+copr_state: enabled
 ```
 
 Dependencies

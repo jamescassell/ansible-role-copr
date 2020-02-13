@@ -4,6 +4,9 @@
 # name of the copr repo to enable
 copr_repo: ufven/cepces
 
+# whether the COPR repo should be enabled or disabled
+copr_state: enabled
+
 
 copr_owner: >-
   {{ copr_repo | regex_search('^([a-zA-Z0-9._-]+)/([a-zA-Z0-9._-]+)$', '\1') | first }}
@@ -17,3 +20,9 @@ copr_repo_file: /etc/yum.repos.d/_copr{{ (ansible_pkg_mgr == 'dnf')
     '_' ~ copr_owner ~ '-' ~ copr_project)
     if copr_repo is search('^([a-zA-Z0-9._-]+)/([a-zA-Z0-9._-]+)$')
     else lookup('copr_repo parameter is invalid') }}.repo
+
+# overloaded to find invalid states
+copr_file_present: >-
+  {{ (copr_state in ['enabled', 'present'])
+  if copr_state in ['enabled', 'disabled', 'present', 'absent']
+  else lookup('copr_state must be "enabled" or "disabled"') }}

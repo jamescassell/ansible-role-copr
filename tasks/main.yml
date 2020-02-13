@@ -27,3 +27,10 @@
       repo_gpgcheck=0
       enabled=1
       enabled_metadata=1
+  when: copr_file_present
+
+- name: remove repo file for {{ copr_repo }}
+  file:
+    dest: "{{ copr_repo_file }}"
+    state: absent
+  when: not copr_file_present
