@@ -12,7 +12,7 @@ copr_project: >-
   {{ copr_repo | regex_search('^([a-zA-Z0-9._-]+)/([a-zA-Z0-9._-]+)$', '\2') | first }}
 
 # this is overloaded to detect an invalid copr_repo
-copr_repo_file: /etc/yum.repos.d/_copr{{ ansible_pkg_mgr == 'dnf'
+copr_repo_file: /etc/yum.repos.d/_copr{{ (ansible_pkg_mgr == 'dnf')
     | ternary(':copr.fedorainfracloud.org:' ~ copr_owner ~ ':' ~ copr_project,
     '_' ~ copr_owner ~ '-' ~ copr_project)
     if copr_repo is search('^([a-zA-Z0-9._-]+)/([a-zA-Z0-9._-]+)$')
